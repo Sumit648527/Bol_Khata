@@ -1,0 +1,132 @@
+graph TB
+    %% Actors
+    Shopkeeper["👤 Shopkeeper<br/>(Street Vendor)"]
+    Customer["👤 Customer<br/>(Buyer)"]
+    Sarvam["🔧 Sarvam AI<br/>(ASR Service)"]
+    Bhashini["🔧 Bhashini<br/>(ASR Fallback)"]
+    WhatsAppAPI["🔧 WhatsApp<br/>Business API"]
+    
+    subgraph BolKhata["Bol-Khata Voice-First Ledger System"]
+        
+        subgraph CoreUseCases["Primary Use Cases"]
+            UC01["UC-01<br/>Record Credit Transaction<br/>(Udhaar)"]
+            UC02["UC-02<br/>Record Payment Transaction<br/>(Jama)"]
+            UC03["UC-03<br/>View Transaction History"]
+            UC04["UC-04<br/>Replay Audio Evidence"]
+        end
+        
+        subgraph VoiceProcessing["Voice Processing Use Cases"]
+            UC05["UC-05<br/>Validate Audio Format"]
+            UC06["UC-06<br/>Transcribe Audio<br/>(Hindi/Tamil/Bengali)"]
+            UC07["UC-07<br/>Extract Entities<br/>(3-Tier Strategy)"]
+            UC08["UC-08<br/>Request User Verification<br/>(Low Confidence)"]
+        end
+        
+        subgraph CustomerMgmt["Customer Management Use Cases"]
+            UC09["UC-09<br/>Find Customer<br/>(Fuzzy Matching)"]
+            UC10["UC-10<br/>Create New Customer"]
+            UC11["UC-11<br/>Update Customer Balance"]
+        end
+        
+        subgraph TransactionMgmt["Transaction Management Use Cases"]
+            UC12["UC-12<br/>Store Transaction<br/>with Audio Evidence"]
+            UC13["UC-13<br/>Calculate Balance"]
+            UC14["UC-14<br/>Handle Overpayment"]
+        end
+        
+        subgraph Notifications["Notification Use Cases"]
+            UC15["UC-15<br/>Send WhatsApp Alert<br/>(Payment Confirmation)"]
+            UC16["UC-16<br/>Generate Voice Response<br/>(Multi-language)"]
+        end
+        
+        subgraph Security["Security Use Cases"]
+            UC17["UC-17<br/>Authenticate User"]
+            UC18["UC-18<br/>Isolate User Data"]
+        end
+        
+        subgraph ErrorHandling["Error Handling Use Cases"]
+            UC19["UC-19<br/>Handle ASR Failure<br/>(Fallback Strategy)"]
+            UC20["UC-20<br/>Handle Database Error<br/>(Rollback)"]
+            UC21["UC-21<br/>Handle WhatsApp Failure<br/>(Non-blocking)"]
+        end
+    end
+    
+    %% Shopkeeper interactions
+    Shopkeeper -->|initiates| UC01
+    Shopkeeper -->|initiates| UC02
+    Shopkeeper -->|initiates| UC03
+    Shopkeeper -->|initiates| UC04
+    Shopkeeper -->|must perform| UC17
+    Shopkeeper <-->|receives| UC16
+    Shopkeeper <-->|confirms| UC08
+    
+    %% Customer interactions
+    Customer <-->|receives| UC15
+    
+    %% External service interactions
+    UC06 <-->|uses| Sarvam
+    UC06 <-->|fallback to| Bhashini
+    UC15 <-->|sends via| WhatsAppAPI
+    
+    %% UC-01 Record Credit includes
+    UC01 -.->|includes| UC05
+    UC01 -.->|includes| UC06
+    UC01 -.->|includes| UC07
+    UC01 -.->|includes| UC09
+    UC01 -.->|includes| UC11
+    UC01 -.->|includes| UC12
+    UC01 -.->|includes| UC13
+    UC01 -.->|includes| UC16
+    UC01 -.->|requires| UC17
+    UC01 -.->|enforces| UC18
+    
+    %% UC-02 Record Payment includes
+    UC02 -.->|includes| UC05
+    UC02 -.->|includes| UC06
+    UC02 -.->|includes| UC07
+    UC02 -.->|includes| UC09
+    UC02 -.->|includes| UC11
+    UC02 -.->|includes| UC12
+    UC02 -.->|includes| UC13
+    UC02 -.->|includes| UC15
+    UC02 -.->|includes| UC16
+    UC02 -.->|requires| UC17
+    UC02 -.->|enforces| UC18
+    
+    %% UC-03 View History includes
+    UC03 -.->|includes| UC13
+    UC03 -.->|requires| UC17
+    UC03 -.->|enforces| UC18
+    
+    %% UC-04 Replay Audio includes
+    UC04 -.->|requires| UC17
+    UC04 -.->|enforces| UC18
+    
+    %% Extends relationships
+    UC07 -.->|extends when<br/>confidence < 0.7| UC08
+    UC09 -.->|extends when<br/>no match found| UC10
+    UC11 -.->|extends when<br/>payment > balance| UC14
+    UC06 -.->|extends on<br/>failure| UC19
+    UC12 -.->|extends on<br/>failure| UC20
+    UC15 -.->|extends on<br/>failure| UC21
+    
+    %% Styling
+    classDef actorStyle fill:#e3f2fd,stroke:#1565c0,stroke-width:3px,color:#000
+    classDef externalStyle fill:#fff3e0,stroke:#e65100,stroke-width:3px,color:#000
+    classDef primaryUC fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef voiceUC fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    classDef customerUC fill:#f8bbd0,stroke:#c2185b,stroke-width:2px,color:#000
+    classDef transactionUC fill:#d1c4e9,stroke:#512da8,stroke-width:2px,color:#000
+    classDef notificationUC fill:#b2dfdb,stroke:#00695c,stroke-width:2px,color:#000
+    classDef securityUC fill:#ffccbc,stroke:#d84315,stroke-width:2px,color:#000
+    classDef errorUC fill:#cfd8dc,stroke:#455a64,stroke-width:2px,color:#000
+    
+    class Shopkeeper,Customer actorStyle
+    class Sarvam,Bhashini,WhatsAppAPI externalStyle
+    class UC01,UC02,UC03,UC04 primaryUC
+    class UC05,UC06,UC07,UC08 voiceUC
+    class UC09,UC10,UC11 customerUC
+    class UC12,UC13,UC14 transactionUC
+    class UC15,UC16 notificationUC
+    class UC17,UC18 securityUC
+    class UC19,UC20,UC21 errorUC

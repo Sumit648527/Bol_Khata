@@ -1,0 +1,93 @@
+graph TB
+    subgraph Actors
+        Shopkeeper[👤 Shopkeeper<br/>Street Vendor]
+        Customer[👤 Customer<br/>Buyer]
+        System[🤖 System<br/>Automated]
+    end
+    
+    subgraph "Bol-Khata System"
+        subgraph "Voice Transaction Management"
+            UC1[Record Credit Transaction<br/>udhaar]
+            UC2[Record Payment Transaction<br/>jama]
+            UC3[Voice Confirmation]
+        end
+        
+        subgraph "Speech Processing"
+            UC4[Transcribe Audio<br/>Hindi/Tamil/Bengali]
+            UC5[Extract Transaction Details<br/>name, amount, type]
+            UC6[Handle Low Confidence<br/>Request Verification]
+        end
+        
+        subgraph "Customer Management"
+            UC7[Find Customer<br/>Fuzzy Matching]
+            UC8[Create New Customer]
+            UC9[Update Customer Balance]
+        end
+        
+        subgraph "Transaction Management"
+            UC10[Store Transaction<br/>with Audio Evidence]
+            UC11[Calculate Balance]
+            UC12[View Transaction History]
+        end
+        
+        subgraph "Notifications"
+            UC13[Send WhatsApp Alert<br/>Payment Confirmation]
+            UC14[Generate Voice Response<br/>Multi-language]
+        end
+        
+        subgraph "Authentication & Security"
+            UC15[Authenticate User]
+            UC16[Isolate User Data]
+        end
+    end
+    
+    %% Shopkeeper interactions
+    Shopkeeper -->|speaks| UC1
+    Shopkeeper -->|speaks| UC2
+    Shopkeeper <-->|hears| UC3
+    Shopkeeper -->|uses| UC12
+    Shopkeeper -->|logs in| UC15
+    
+    %% Customer interactions
+    Customer <-->|receives| UC13
+    
+    %% System interactions
+    System -->|performs| UC4
+    System -->|performs| UC5
+    System -->|performs| UC6
+    System -->|performs| UC7
+    System -->|performs| UC8
+    System -->|performs| UC9
+    System -->|performs| UC10
+    System -->|performs| UC11
+    System -->|performs| UC14
+    System -->|enforces| UC16
+    
+    %% Use case relationships
+    UC1 -.includes.-> UC4
+    UC1 -.includes.-> UC5
+    UC1 -.includes.-> UC7
+    UC1 -.includes.-> UC10
+    UC1 -.includes.-> UC11
+    UC1 -.includes.-> UC14
+    
+    UC2 -.includes.-> UC4
+    UC2 -.includes.-> UC5
+    UC2 -.includes.-> UC7
+    UC2 -.includes.-> UC10
+    UC2 -.includes.-> UC11
+    UC2 -.includes.-> UC13
+    UC2 -.includes.-> UC14
+    
+    UC5 -.extends.-> UC6
+    UC7 -.extends.-> UC8
+    
+    UC15 -.includes.-> UC16
+    
+    classDef actorStyle fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef useCaseStyle fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef systemStyle fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    
+    class Shopkeeper,Customer actorStyle
+    class System systemStyle
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11,UC12,UC13,UC14,UC15,UC16 useCaseStyle

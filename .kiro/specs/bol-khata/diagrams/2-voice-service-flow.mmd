@@ -1,0 +1,25 @@
+graph LR
+    Input[Audio Input<br/>WAV/MP3]
+    
+    subgraph ASR["Speech Recognition"]
+        Sarvam[Sarvam AI<br/>Primary]
+        Bhashini[Bhashini<br/>Fallback]
+    end
+    
+    subgraph NLU["Natural Language Understanding"]
+        Tier1[Tier 1: Regex<br/>Fast Pattern Match]
+        Tier2[Tier 2: Keywords<br/>Medium Speed]
+        Tier3[Tier 3: LLM<br/>Flexible AI]
+    end
+    
+    Output[JSON Output<br/>name, amount, type, confidence]
+    
+    Input --> Sarvam
+    Sarvam -.Timeout/Error.-> Bhashini
+    Sarvam --> Tier1
+    Bhashini --> Tier1
+    Tier1 -.Fail.-> Tier2
+    Tier2 -.Fail.-> Tier3
+    Tier1 --> Output
+    Tier2 --> Output
+    Tier3 --> Output

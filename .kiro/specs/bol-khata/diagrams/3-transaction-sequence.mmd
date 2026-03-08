@@ -1,0 +1,30 @@
+sequenceDiagram
+    participant VS as Voice Service
+    participant API as Transaction API
+    participant CS as Customer Service
+    participant TS as Transaction Service
+    participant DB as MySQL Database
+    participant WA as WhatsApp Service
+    participant Cust as Customer
+    
+    VS->>API: POST /api/transactions/log<br/>{name, amount, type}
+    API->>CS: findOrCreateCustomer(name, userId)
+    CS->>CS: Fuzzy Match (0.8 threshold)
+    CS->>DB: Query/Insert Customer
+    DB-->>CS: Customer Record
+    CS-->>API: Customer ID
+    
+    API->>TS: createTransaction(data)
+    TS->>DB: BEGIN TRANSACTION
+    TS->>DB: INSERT transaction
+    TS->>DB: UPDATE customer balance
+    TS->>DB: COMMIT
+    DB-->>TS: Success
+    
+    alt Payment Transaction
+        TS->>WA: sendPaymentAlert(customer)
+        WA->>Cust: WhatsApp Message
+    end
+    
+    TS-->>API: Transaction Response
+    API-->>VS: {success, message, balance}

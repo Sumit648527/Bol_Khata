@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Bol-Khata Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(236, 72, 153, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 1100px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            z-index: 1;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .register-left {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            padding: 60px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-left::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse-bg 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-bg {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .logo {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo i {
+            font-size: 48px;
+        }
+
+        .register-left h2 {
+            font-size: 36px;
+            margin-bottom: 16px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .register-left > p {
+            font-size: 17px;
+            opacity: 0.95;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .benefits {
+            margin-top: 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            animation: fadeInLeft 0.6s ease-out;
+        }
+
+        .benefit-item:nth-child(1) { animation-delay: 0.1s; }
+        .benefit-item:nth-child(2) { animation-delay: 0.2s; }
+        .benefit-item:nth-child(3) { animation-delay: 0.3s; }
+        .benefit-item:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .benefit-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .benefit-item span {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .register-right {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .register-right h3 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .register-right .subtitle {
+            color: #475569;
+            margin-bottom: 36px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 14px 18px 14px 50px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-weight: 500;
+            background: rgba(248, 250, 252, 0.5);
+        }
+
+        .form-select {
+            cursor: pointer;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            background: white;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            margin-top: 8px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(99, 102, 241, 0.4);
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        }
+
+        .btn-register:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 24px;
+            color: #475569;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .login-link a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: none;
+            font-weight: 600;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.error {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+            border: 2px solid #fca5a5;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            border: 2px solid #6ee7b7;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        .password-strength.weak .password-strength-bar {
+            width: 33%;
+            background: #ef4444;
+        }
+
+        .password-strength.medium .password-strength-bar {
+            width: 66%;
+            background: #f59e0b;
+        }
+
+        .password-strength.strong .password-strength-bar {
+            width: 100%;
+            background: #10b981;
+        }
+
+        @media (max-width: 768px) {
+            .register-container {
+                grid-template-columns: 1fr;
+                border-radius: 24px;
+            }
+
+            .register-left {
+                display: none;
+            }
+
+            .register-right {
+                padding: 40px 30px;
+            }
+
+            .register-right h3 {
+                font-size: 28px;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-left">
+            <div class="logo">
+                <i class="fas fa-store"></i>
+                Bol-Khata
+            </div>
+            <h2>Join Bol-Khata Today!</h2>
+            <p>Start managing your business with India's first voice-powered financial ledger.</p>
+            
+            <div class="benefits">
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <span>Quick 2-minute setup</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <span>Free forever for small businesses</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <span>AI-powered insights</span>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <span>Works on any device</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="register-right">
+            <h3>Create Your Account</h3>
+            <p class="subtitle">Fill in your details to get started</p>
+
+            <div id="alert" class="alert"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Shop Name</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-store"></i>
+                        <input type="text" class="form-input" id="shopName" placeholder="Enter your shop name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" class="form-input" id="mobile" placeholder="Enter your 10-digit mobile number" 
+                               pattern="[0-9]{10}" maxlength="10" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-input" id="password" placeholder="Create a strong password" 
+                               minlength="6" required>
+                    </div>
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="password-strength-bar"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-input" id="confirmPassword" placeholder="Re-enter your password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Preferred Language</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-language"></i>
+                        <select class="form-select" id="language" required>
+                            <option value="">Select your language</option>
+                            <option value="hi">Hindi - हिंदी</option>
+                            <option value="en">English</option>
+                            <option value="gu">Gujarati - ગુજરાતી</option>
+                            <option value="ta">Tamil - தமிழ்</option>
+                            <option value="te">Telugu - తెలుగు</option>
+                            <option value="bn">Bengali - বাংলা</option>
+                            <option value="mr">Marathi - मराठी</option>
+                            <option value="kn">Kannada - ಕನ್ನಡ</option>
+                            <option value="ml">Malayalam - മലയാളം</option>
+                            <option value="pa">Punjabi - ਪੰਜਾਬੀ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-register" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <div class="login-link">
+                Already have an account? <a href="login-pro.html">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8081/api';
+
+        // Password strength checker
+        document.getElementById('password').addEventListener('input', (e) => {
+            const password = e.target.value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthDiv.style.display = 'none';
+                return;
+            }
+
+            strengthDiv.style.display = 'block';
+            strengthDiv.className = 'password-strength';
+
+            if (password.length < 6) {
+                strengthDiv.classList.add('weak');
+            } else if (password.length < 10) {
+                strengthDiv.classList.add('medium');
+            } else {
+                strengthDiv.classList.add('strong');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const shopName = document.getElementById('shopName').value;
+            const mobile = document.getElementById('mobile').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const language = document.getElementById('language').value;
+            const registerBtn = document.getElementById('registerBtn');
+            const alert = document.getElementById('alert');
+
+            // Validate mobile number
+            if (mobile.length !== 10 || !/^\d+$/.test(mobile)) {
+                alert.className = 'alert error';
+                alert.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a valid 10-digit mobile number';
+                alert.style.display = 'block';
+                return;
+            }
+
+            // Validate password match
+            if (password !== confirmPassword) {
+                alert.className = 'alert error';
+                alert.innerHTML = '<i class="fas fa-exclamation-circle"></i> Passwords do not match';
+                alert.style.display = 'block';
+                return;
+            }
+
+            // Validate password strength
+            if (password.length < 6) {
+                alert.className = 'alert error';
+                alert.innerHTML = '<i class="fas fa-exclamation-circle"></i> Password must be at least 6 characters long';
+                alert.style.display = 'block';
+                return;
+            }
+
+            // Hide alert
+            alert.style.display = 'none';
+
+            // Disable button
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ shopName, mobile, password, language })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show success
+                    alert.className = 'alert success';
+                    alert.innerHTML = '<i class="fas fa-check-circle"></i> Account created successfully! Redirecting to login...';
+                    alert.style.display = 'block';
+
+                    // Redirect to login
+                    setTimeout(() => {
+                        window.location.href = 'login-pro.html';
+                    }, 2000);
+                } else {
+                    alert.className = 'alert error';
+                    alert.innerHTML = '<i class="fas fa-times-circle"></i> ' + (data.message || 'Registration failed. Please try again.');
+                    alert.style.display = 'block';
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert.className = 'alert error';
+                alert.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Network error. Please check if the server is running.';
+                alert.style.display = 'block';
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            }
+        });
+
+        // Auto-focus on shop name input
+        document.getElementById('shopName').focus();
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "node",
+      "args": [
+        "C:/Users/Subindu Kumar/AppData/Roaming/npm/node_modules/@modelcontextprotocol/server-fetch/dist/index.js"
+      ],
+      "env": {},
+      "disabled": true,
+      "autoApprove": []
+    }
+  }
+}

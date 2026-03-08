@@ -1,0 +1,129 @@
+# BolKhata - Git Ignore File
+
+# Sensitive Files - DO NOT COMMIT
+.env
+*.pem
+*.key
+**/application.properties
+AWS_RESOURCE_IDS.md
+scripts/*-secrets.sh
+
+# Compiled Files
+*.class
+*.jar
+!**/wrapper/*.jar
+target/
+build/
+out/
+*.war
+*.ear
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+*.egg-info/
+dist/
+
+# IDE Files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Audio Files (too large for git)
+banking-service/audio-files/
+**/audio-files/
+*.wav
+*.mp3
+*.ogg
+
+# Lambda (not used - using EC2 deployment)
+lambda/
+
+# Generated diagrams
+generated-diagrams/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Node modules (if any)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# OS Files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Build artifacts
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+.mvn/
+mvn.cmd
+mvnw
+mvnw.cmd
+
+# Documentation - Exclude all temporary/debug docs
+*_COMPLETE.md
+*_FIXES*.md
+*_DEBUG.md
+*_STATUS.md
+*_PROGRESS.md
+*_SUMMARY.md
+CLEANUP_*.md
+FIX_*.md
+RUN_THIS_*.md
+ROUTE53_*.md
+HTTPS_*.md
+DOMAIN_*.md
+EC2_*.md
+SCHEMA_*.md
+AWS_*.md
+LAMBDA_*.md
+VOICE_*.md
+HACKATHON_*.md
+PASSBOOK_*.md
+MANUAL_*.md
+FINAL_*.md
+QUICK_*.md
+HOW_TO_*.md
+
+# Keep only these essential docs
+!README.md
+!DEPLOYMENT_GUIDE.md
+!DEMO_VIDEO_SCRIPT.md
+!LICENSE

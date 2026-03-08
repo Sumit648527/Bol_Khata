@@ -1,0 +1,72 @@
+graph LR
+    subgraph System["Bol-Khata Voice-First Ledger System"]
+        direction TB
+        
+        subgraph Core["Core Use Cases"]
+            RecordCredit((Record Credit<br/>Transaction))
+            RecordPayment((Record Payment<br/>Transaction))
+            ViewHistory((View Transaction<br/>History))
+        end
+        
+        subgraph Voice["Voice Processing"]
+            Transcribe((Transcribe<br/>Audio))
+            Extract((Extract<br/>Entities))
+            Verify((Request<br/>Verification))
+        end
+        
+        subgraph Customer["Customer Management"]
+            FindCustomer((Find/Match<br/>Customer))
+            CreateCustomer((Create New<br/>Customer))
+            UpdateBalance((Update<br/>Balance))
+        end
+        
+        subgraph Notification["Notifications"]
+            WhatsApp((Send WhatsApp<br/>Alert))
+            VoiceResponse((Generate Voice<br/>Response))
+        end
+        
+        subgraph Storage["Data Management"]
+            StoreTransaction((Store Transaction<br/>+ Audio))
+            CalculateBalance((Calculate<br/>Balance))
+        end
+    end
+    
+    Shopkeeper[👤 Shopkeeper]
+    Customer[👤 Customer]
+    
+    %% Primary actors
+    Shopkeeper --> RecordCredit
+    Shopkeeper --> RecordPayment
+    Shopkeeper --> ViewHistory
+    
+    %% Includes relationships
+    RecordCredit -.->|includes| Transcribe
+    RecordCredit -.->|includes| Extract
+    RecordCredit -.->|includes| FindCustomer
+    RecordCredit -.->|includes| StoreTransaction
+    RecordCredit -.->|includes| UpdateBalance
+    RecordCredit -.->|includes| VoiceResponse
+    
+    RecordPayment -.->|includes| Transcribe
+    RecordPayment -.->|includes| Extract
+    RecordPayment -.->|includes| FindCustomer
+    RecordPayment -.->|includes| StoreTransaction
+    RecordPayment -.->|includes| UpdateBalance
+    RecordPayment -.->|includes| WhatsApp
+    RecordPayment -.->|includes| VoiceResponse
+    
+    ViewHistory -.->|includes| CalculateBalance
+    
+    %% Extends relationships
+    Extract -.->|extends| Verify
+    FindCustomer -.->|extends| CreateCustomer
+    
+    %% Customer receives notifications
+    WhatsApp --> Customer
+    
+    %% Styling
+    classDef actorClass fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    classDef useCaseClass fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    
+    class Shopkeeper,Customer actorClass
+    class RecordCredit,RecordPayment,ViewHistory,Transcribe,Extract,Verify,FindCustomer,CreateCustomer,UpdateBalance,WhatsApp,VoiceResponse,StoreTransaction,CalculateBalance useCaseClass

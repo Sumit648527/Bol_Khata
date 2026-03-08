@@ -1,0 +1,32 @@
+graph TB
+    User[Street Vendor<br/>Mobile/Web App]
+    
+    subgraph Voice["Voice Service (Python/FastAPI)"]
+        Audio[Audio Handler]
+        ASR[ASR Service<br/>Sarvam AI / Bhashini]
+        NLU[3-Tier NLU<br/>Regex → Keywords → LLM]
+    end
+    
+    subgraph Banking["Banking Service (Java/Spring Boot)"]
+        API[Transaction Controller]
+        Customer[Customer Service<br/>Fuzzy Matching]
+        Transaction[Transaction Service]
+        WhatsApp[WhatsApp Service]
+        Storage[Audio Storage]
+    end
+    
+    DB[(MySQL Database)]
+    WA[WhatsApp Business API]
+    
+    User -->|Audio File| Audio
+    Audio --> ASR
+    ASR --> NLU
+    NLU -->|JSON: name, amount, type| API
+    API --> Customer
+    Customer --> Transaction
+    Transaction --> DB
+    Transaction --> Storage
+    Transaction --> WhatsApp
+    WhatsApp --> WA
+    WA -->|Payment Alert| User
+    API -->|Voice Confirmation| User

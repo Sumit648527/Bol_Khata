@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bol-Khata - Voice Financial Ledger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles-pro.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader"></div>
+        <p>Loading Bol-Khata...</p>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container" id="appContainer" style="display: none;">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-store"></i>
+                    <span>Bol-Khata</span>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="user-profile">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h3 id="userShopName">Loading...</h3>
+                    <p id="userMobile">...</p>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item" data-page="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span data-translate="dashboard">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item active" data-page="voice">
+                    <i class="fas fa-microphone"></i>
+                    <span data-translate="voice-entry">Voice Entry</span>
+                    <span class="badge">Core</span>
+                </a>
+                <a href="#" class="nav-item" data-page="customers">
+                    <i class="fas fa-users"></i>
+                    <span data-translate="customers">Customers</span>
+                </a>
+                <a href="#" class="nav-item" data-page="transactions">
+                    <i class="fas fa-receipt"></i>
+                    <span data-translate="transactions">Transactions</span>
+                </a>
+                <a href="#" class="nav-item" data-page="passbook">
+                    <i class="fas fa-book"></i>
+                    <span data-translate="passbook">Passbook</span>
+                    <span class="badge" style="background: #f59e0b;">New</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search customers, transactions..." id="globalSearch">
+                </div>
+                <div class="top-bar-actions">
+                    <button class="icon-btn language-toggle" id="languageBtn" onclick="toggleLanguage()" title="Switch Language">
+                        <span id="languageIcon">A</span>
+                    </button>
+                    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <div class="user-menu">
+                        <img src="https://ui-avatars.com/api/?name=User&background=667eea&color=fff" alt="User" class="user-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                
+                <!-- Voice Entry Page (Default) -->
+                <div id="voice-page" class="page active">
+                    <div class="page-header">
+                        <div>
+                            <h1><i class="fas fa-microphone"></i> Voice Entry</h1>
+                            <p class="subtitle">Record transaction using voice - The core feature</p>
+                        </div>
+                    </div>
+
+                    <div class="voice-container">
+                        <div class="voice-card">
+                            <div class="voice-visualizer">
+                                <div class="voice-circle" id="voiceCircle">
+                                    <button class="voice-btn" id="voiceBtn">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                </div>
+                                <div class="voice-waves" id="voiceWaves">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+
+                            <div class="voice-status">
+                                <p id="voiceStatus">Click microphone to start recording</p>
+                                <span class="voice-timer" id="voiceTimer">00:00</span>
+                            </div>
+
+                            <div class="manual-entry-option">
+                                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">Or</p>
+                                <button class="btn-secondary" id="manualEntryBtn" onclick="openManualEntryModal()">
+                                    <i class="fas fa-keyboard"></i> Manual Entry
+                                </button>
+                            </div>
+
+                            <div class="voice-tips">
+                                <h4>💡 Tips for better recognition:</h4>
+                                <ul>
+                                    <li>Speak clearly and at normal pace</li>
+                                    <li>Mention customer name, amount, and action (gave/took)</li>
+                                    <li>Example: "Ramesh ne sau rupay udhaar liye"</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Transcription Results -->
+                        <div class="transcription-results" id="transcriptionResults" style="display: none;">
+                            <div class="result-card">
+                                <h3><i class="fas fa-language"></i> Original Transcription</h3>
+                                <p id="originalText" class="result-text"></p>
+                            </div>
+
+                            <div class="result-card">
+                                <h3><i class="fas fa-globe"></i> English Translation</h3>
+                                <p id="translatedText" class="result-text"></p>
+                            </div>
+
+                            <div class="result-card highlight">
+                                <h3><i class="fas fa-check-circle"></i> Detected Transaction</h3>
+                                <div class="transaction-preview">
+                                    <div class="preview-item">
+                                        <span class="label">Customer:</span>
+                                        <span class="value" id="detectedCustomer">-</span>
+                                    </div>
+                                    <div class="preview-item">
+                                        <span class="label">Amount:</span>
+                                        <span class="value amount" id="detectedAmount">₹0</span>
+                                    </div>
+                                    <div class="preview-item">
+                                        <span class="label">Type:</span>
+                                        <span class="value badge" id="detectedType">-</span>
+                                    </div>
+                                    <div class="preview-item">
+                                        <span class="label">Confidence:</span>
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill" id="confidenceFill"></div>
+                                            <span id="confidenceText">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="lowConfidenceWarning" style="display:none; padding: 16px; background: #fef3c7; border-radius: 10px; margin: 16px 0; color: #92400e;">
+                                    ⚠️ Low confidence detected. Please verify the details before confirming.
+                                </div>
+
+                                <div class="action-buttons">
+                                    <button class="btn-secondary" id="tryAgainBtn">
+                                        <i class="fas fa-redo"></i> Try Again
+                                    </button>
+                                    <button class="btn-primary" id="confirmBtn">
+                                        <i class="fas fa-check"></i> Confirm Transaction
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="resultBox" style="display:none; padding: 20px; border-radius: 12px; margin-top: 20px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page">
+                    <div class="page-header">
+                        <div>
+                            <h1>Dashboard</h1>
+                            <p class="subtitle">Overview of your business</p>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn-primary" onclick="navigateTo('voice')">
+                                <i class="fas fa-microphone"></i>
+                                New Entry
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <p class="stat-label" data-translate="total-customers">Total Customers</p>
+                                <h2 class="stat-value" id="totalCustomers">0</h2>
+                                <span class="stat-trend positive"><i class="fas fa-arrow-up"></i> Active</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="stat-content">
+                                <p class="stat-label" data-translate="total-credit">Total Credit Given</p>
+                                <h2 class="stat-value" id="totalCredit">₹0</h2>
+                                <span class="stat-trend" id="creditTrend">This month</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="stat-content">
+                                <p class="stat-label" data-translate="total-payment">Total Payments Received</p>
+                                <h2 class="stat-value" id="totalPayment">₹0</h2>
+                                <span class="stat-trend positive" id="paymentTrend"><i class="fas fa-arrow-up"></i> Growing</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon red">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="stat-content">
+                                <p class="stat-label" data-translate="outstanding-balance">Outstanding Balance</p>
+                                <h2 class="stat-value" id="outstandingBalance">₹0</h2>
+                                <span class="stat-trend" id="outstandingTrend">Pending</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="charts-row">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-line"></i> Revenue Trend</h3>
+                                <select class="filter-select-sm" id="revenuePeriod" onchange="updateRevenueChart()">
+                                    <option value="7">Last 7 Days</option>
+                                    <option value="30">Last 30 Days</option>
+                                    <option value="90">Last 90 Days</option>
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-pie"></i> Transaction Types</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="transactionTypeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Customers -->
+                    <div class="top-customers-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-star"></i> Top Customers by Outstanding</h3>
+                            <a href="#" class="link-btn" onclick="navigateTo('customers')">View All</a>
+                        </div>
+                        <div id="topCustomersList">Loading...</div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="activity-section">
+                        <div class="section-header">
+                            <h3>Recent Transactions</h3>
+                            <a href="#" class="link-btn" onclick="navigateTo('transactions')">View All</a>
+                        </div>
+                        <div id="recentTransactionsList">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Customers Page -->
+                <div id="customers-page" class="page">
+                    <div class="page-header">
+                        <div>
+                            <h1>Customers</h1>
+                            <p class="subtitle">Manage your customer relationships</p>
+                        </div>
+                        <div class="header-actions">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search customers..." id="customerSearch" onkeyup="filterCustomers()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="customers-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th data-translate="customer">Customer</th>
+                                    <th data-translate="mobile">Mobile</th>
+                                    <th data-translate="outstanding">Outstanding</th>
+                                    <th data-translate="status">Status</th>
+                                    <th data-translate="risk-score">Risk Score</th>
+                                    <th data-translate="created">Created</th>
+                                    <th data-translate="actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTableBody">
+                                <tr><td colspan="7" style="text-align: center; padding: 40px;">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Passbook Page -->
+                <div id="passbook-page" class="page">
+                    <div class="page-header">
+                        <div>
+                            <h1><i class="fas fa-book"></i> Vyapar Passbook</h1>
+                            <p class="subtitle">Your digital shop statement</p>
+                        </div>
+                        <div class="header-actions">
+                            <select class="filter-select" id="passbookPeriod" onchange="loadPassbook()">
+                                <option value="today">Today</option>
+                                <option value="week">Last 7 Days</option>
+                                <option value="month" selected>This Month</option>
+                                <option value="year">This Year</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                            <button class="btn-primary" onclick="downloadPassbookPDF()">
+                                <i class="fas fa-download"></i>
+                                Download PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Custom Date Range (Hidden by default) -->
+                    <div id="customDateRange" style="display: none; margin-bottom: 24px; padding: 20px; background: var(--glass-bg); border-radius: 16px; border: 2px solid var(--glass-border);">
+                        <div style="display: flex; gap: 16px; align-items: end;">
+                            <div style="flex: 1;">
+                                <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">From Date</label>
+                                <input type="date" id="customFromDate" class="form-input" style="padding: 10px 14px;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">To Date</label>
+                                <input type="date" id="customToDate" class="form-input" style="padding: 10px 14px;">
+                            </div>
+                            <button class="btn-primary" onclick="loadPassbook()">
+                                <i class="fas fa-filter"></i> Apply
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Three-Pillar Dashboard -->
+                    <div class="passbook-summary">
+                        <div class="passbook-card income">
+                            <div class="passbook-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="passbook-content">
+                                <p class="passbook-label">Total Shop Income</p>
+                                <h2 class="passbook-value" id="passbookIncome">₹0</h2>
+                                <span class="passbook-desc">Cash in hand (Realized)</span>
+                            </div>
+                        </div>
+
+                        <div class="passbook-card credit">
+                            <div class="passbook-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <div class="passbook-content">
+                                <p class="passbook-label">Total Credit Given</p>
+                                <h2 class="passbook-value" id="passbookCredit">₹0</h2>
+                                <span class="passbook-desc">New Udhaar given</span>
+                            </div>
+                        </div>
+
+                        <div class="passbook-card outstanding">
+                            <div class="passbook-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="passbook-content">
+                                <p class="passbook-label">Net Outstanding Change</p>
+                                <h2 class="passbook-value" id="passbookChange">₹0</h2>
+                                <span class="passbook-desc" id="passbookChangeDesc">Balance status</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Period Summary -->
+                    <div class="period-summary">
+                        <h3><i class="fas fa-calendar-alt"></i> <span id="periodTitle">This Month</span> Summary</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span class="summary-label">Total Transactions:</span>
+                                <span class="summary-value" id="totalTransactions">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Sale (Paid):</span>
+                                <span class="summary-value green" id="salePaidCount">0 (₹0)</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Sale (Credit):</span>
+                                <span class="summary-value red" id="saleCreditCount">0 (₹0)</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Payments Received:</span>
+                                <span class="summary-value blue" id="paymentReceivedCount">0 (₹0)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chronological Ledger -->
+                    <div class="passbook-ledger">
+                        <h3><i class="fas fa-list"></i> Transaction Ledger</h3>
+                        <div class="passbook-table-container">
+                            <table class="data-table passbook-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Customer</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="passbookTableBody">
+                                    <tr><td colspan="5" style="text-align: center; padding: 40px;">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Page -->
+                <div id="transactions-page" class="page">
+                    <div class="page-header">
+                        <div>
+                            <h1>Transactions</h1>
+                            <p class="subtitle">Complete transaction history</p>
+                        </div>
+                        <div class="header-actions">
+                            <select class="filter-select" id="transactionTypeFilter" onchange="filterTransactions()">
+                                <option value="">All Types</option>
+                                <option value="SALE_PAID">Sale (Paid)</option>
+                                <option value="SALE_CREDIT">Sale (Credit)</option>
+                                <option value="PAYMENT_RECEIVED">Payment Received</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="transactions-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th data-translate="date-time">Date & Time</th>
+                                    <th data-translate="customer">Customer</th>
+                                    <th data-translate="type">Type</th>
+                                    <th data-translate="amount">Amount</th>
+                                    <th data-translate="transcription">Transcription</th>
+                                    <th data-translate="audio">Audio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody">
+                                <tr><td colspan="6" style="text-align: center; padding: 40px;">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <!-- Edit Customer Modal -->
+    <div class="modal-overlay" id="editCustomerModal">
+        <div class="modal edit-customer-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> Edit Customer</h3>
+                <button class="modal-close" onclick="closeEditCustomerModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editCustomerForm">
+                    <input type="hidden" id="editCustomerId">
+                    
+                    <div class="form-group">
+                        <label>Customer Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" class="form-input" id="editCustomerName" placeholder="Enter customer name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" class="form-input" id="editCustomerMobile" placeholder="Enter mobile number" 
+                                   pattern="[0-9]{10}" maxlength="10">
+                        </div>
+                    </div>
+
+                    <div class="customer-financial-info">
+                        <div class="info-item">
+                            <span class="info-label">Total Credit:</span>
+                            <span class="info-value" id="editCustomerCredit">₹0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Total Payments:</span>
+                            <span class="info-value" id="editCustomerPayments">₹0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Outstanding:</span>
+                            <span class="info-value outstanding" id="editCustomerOutstanding">₹0</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeEditCustomerModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" onclick="saveCustomerChanges()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Entry Modal -->
+    <div class="modal-overlay" id="manualEntryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-keyboard"></i> Manual Transaction Entry</h3>
+                <button class="modal-close" onclick="closeManualEntryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="manualEntryForm">
+                    <div class="form-group">
+                        <label>Customer Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" class="form-input" id="manualCustomerName" placeholder="Enter customer name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Amount (₹)</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-rupee-sign"></i>
+                            <input type="number" class="form-input" id="manualAmount" placeholder="Enter amount" required min="1">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Transaction Type</label>
+                        <select class="form-input" id="manualType" required style="padding-left: 14px;">
+                            <option value="">Select type...</option>
+                            <option value="SALE_PAID">Sale (Paid) - Cash received</option>
+                            <option value="SALE_CREDIT">Sale (Credit) - Credit given</option>
+                            <option value="PAYMENT_RECEIVED">Payment Received</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notes (Optional)</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-comment"></i>
+                            <input type="text" class="form-input" id="manualNotes" placeholder="Add any notes...">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeManualEntryModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn-primary" onclick="saveManualEntry()">
+                    <i class="fas fa-save"></i> Save Transaction
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="navigateTo('voice')" title="Quick Voice Entry">
+        <i class="fas fa-microphone"></i>
+    </button>
+
+    <script src="app-final.js"></script>
+</body>
+</html>
