@@ -1,0 +1,28 @@
+services:
+  # Banking Service - Spring Boot
+  - type: web
+    name: bolkhata-banking
+    runtime: java
+    buildCommand: cd banking-service && mvn clean package -DskipTests
+    startCommand: java -jar banking-service/target/banking-service-1.0.0.jar
+    envVars:
+      - key: DATABASE_URL
+        value: jdbc:postgresql://db.atpkahyggkuqkyndpqov.supabase.co:5432/postgres
+      - key: DATABASE_USERNAME
+        value: postgres
+      - key: DATABASE_PASSWORD
+        value: Vkfan.sumit6918
+      - key: PORT
+        value: 8080
+
+  # Voice Service - FastAPI
+  - type: web
+    name: bolkhata-voice
+    runtime: python
+    buildCommand: cd voice-service && pip install -r requirements.txt
+    startCommand: cd voice-service && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SARVAM_API_KEY
+        value: sk_oyrsxxtr_dSioCNIGBDoiAtqqWkVLmYG6
+      - key: SARVAM_API_URL
+        value: https://api.sarvam.ai/speech-to-text

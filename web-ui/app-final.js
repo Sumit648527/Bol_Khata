@@ -1,8 +1,12 @@
 // Bol-Khata Final - Working JavaScript with Professional UI
 
-// Configuration
-const API_BASE = 'http://localhost:8081/api';
-const VOICE_API = 'http://localhost:8000';
+// Configuration - Update these URLs after Render deployment
+const API_BASE = window.location.hostname === 'localhost' 
+    ? 'http://localhost:8081/api' 
+    : 'https://bolkhata-banking.onrender.com/api';
+const VOICE_API = window.location.hostname === 'localhost'
+    ? 'http://localhost:8000'
+    : 'https://bolkhata-voice.onrender.com';
 
 // State
 let currentUser = null;
