@@ -38,16 +38,13 @@ public class ShopStatisticsService {
         
         // Calculate from transactions
         for (Transaction t : allTransactions) {
-            switch(t.getType()) {
-                case SALE_PAID:
-                    totalSalesPaid = totalSalesPaid.add(t.getAmount());
-                    break;
-                case SALE_CREDIT:
-                    totalCreditGiven = totalCreditGiven.add(t.getAmount());
-                    break;
-                case PAYMENT_RECEIVED:
-                    totalPaymentsReceived = totalPaymentsReceived.add(t.getAmount());
-                    break;
+            String type = t.getType();
+            if ("SALE_PAID".equals(type)) {
+                totalSalesPaid = totalSalesPaid.add(t.getAmount());
+            } else if ("SALE_CREDIT".equals(type)) {
+                totalCreditGiven = totalCreditGiven.add(t.getAmount());
+            } else if ("PAYMENT_RECEIVED".equals(type)) {
+                totalPaymentsReceived = totalPaymentsReceived.add(t.getAmount());
             }
         }
         
@@ -86,16 +83,13 @@ public class ShopStatisticsService {
         BigDecimal todayPaymentsReceived = BigDecimal.ZERO;
         
         for (Transaction t : todayTransactions) {
-            switch(t.getType()) {
-                case SALE_PAID:
-                    todaySalesPaid = todaySalesPaid.add(t.getAmount());
-                    break;
-                case SALE_CREDIT:
-                    todayCreditGiven = todayCreditGiven.add(t.getAmount());
-                    break;
-                case PAYMENT_RECEIVED:
-                    todayPaymentsReceived = todayPaymentsReceived.add(t.getAmount());
-                    break;
+            String type = t.getType();
+            if ("SALE_PAID".equals(type)) {
+                todaySalesPaid = todaySalesPaid.add(t.getAmount());
+            } else if ("SALE_CREDIT".equals(type)) {
+                todayCreditGiven = todayCreditGiven.add(t.getAmount());
+            } else if ("PAYMENT_RECEIVED".equals(type)) {
+                todayPaymentsReceived = todayPaymentsReceived.add(t.getAmount());
             }
         }
         

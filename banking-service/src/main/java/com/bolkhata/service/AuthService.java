@@ -29,7 +29,7 @@ public class AuthService {
         
         // Create new user
         User user = new User();
-        user.setUsername(request.getMobile()); // Use mobile as username
+        user.setMobile(request.getMobile()); // Use mobile as username
         user.setShopName(request.getShopName());
         user.setMobile(request.getMobile());
         user.setPassword(request.getPassword()); // In production, hash this!

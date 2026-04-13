@@ -99,30 +99,22 @@ public class CustomerService {
         Customer customer = customerRepository.findById(customerId)
             .orElseThrow(() -> new RuntimeException("Customer not found"));
         
-        Transaction.TransactionType transactionType = Transaction.TransactionType.valueOf(type);
-        
-        switch(transactionType) {
-            case SALE_PAID:
+        switch(type) {
+            case "SALE_PAID":
                 // Immediate payment - no change to outstanding
-                // Customer paid on the spot, nothing owed
                 break;
-                
-            case SALE_CREDIT:
+            case "SALE_CREDIT":
                 // Credit sale - customer owes more
                 customer.setTotalCredit(customer.getTotalCredit().add(amount));
                 customer.setOutstanding(customer.getOutstanding().add(amount));
                 break;
-                
-            case PAYMENT_RECEIVED:
+            case "PAYMENT_RECEIVED":
                 // Payment received - customer owes less
                 customer.setTotalPayments(customer.getTotalPayments().add(amount));
                 BigDecimal newOutstanding = customer.getOutstanding().subtract(amount);
-                // Ensure outstanding never goes negative
                 customer.setOutstanding(newOutstanding.max(BigDecimal.ZERO));
-                
-                // Log if overpayment detected
                 if (newOutstanding.compareTo(BigDecimal.ZERO) < 0) {
-                    logger.info("Overpayment detected for customer {}: paid {} but owed only {}", 
+                    logger.info("Overpayment detected for customer {}: paid {} but owed only {}",
                                customerId, amount, customer.getOutstanding());
                 }
                 break;
