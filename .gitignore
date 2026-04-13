@@ -5,6 +5,7 @@
 *.pem
 *.key
 **/application.properties
+!banking-service/src/main/resources/application.properties
 AWS_RESOURCE_IDS.md
 scripts/*-secrets.sh
 
