@@ -111,15 +111,30 @@ public class TransactionController {
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
+            String rootMessage = getRootCauseMessage(e);
+            String message = rootMessage != null && !rootMessage.isBlank()
+                ? rootMessage
+                : e.getMessage();
+
             TransactionResponse errorResponse = new TransactionResponse(
                 false,
-                "Error recording transaction: " + e.getMessage(),
+                "Error recording transaction: " + message,
                 null,
                 null
             );
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
         }
+    }
+
+    private String getRootCauseMessage(Throwable t) {
+        if (t == null) return null;
+        Throwable cur = t;
+        int guard = 0;
+        while (cur.getCause() != null && cur.getCause() != cur && guard++ < 25) {
+            cur = cur.getCause();
+        }
+        return cur.getMessage();
     }
     
     /**
