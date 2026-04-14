@@ -6,6 +6,7 @@ import com.bolkhata.repository.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,11 @@ public class CustomerService {
     
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    private volatile Boolean pgTrgmAvailable;
     
     /**
      * Find or create customer using fuzzy matching
@@ -42,6 +48,10 @@ public class CustomerService {
      * Falls back to Levenshtein if pg_trgm query fails
      */
     public Optional<Customer> fuzzyMatchCustomer(String name, Long userId) {
+        if (!isPgTrgmAvailable()) {
+            return Optional.empty();
+        }
+
         try {
             // Try PostgreSQL native fuzzy matching first (faster)
             List<Customer> matches = customerRepository.findByFuzzyNameMatch(userId, name);
@@ -52,6 +62,8 @@ public class CustomerService {
         } catch (Exception e) {
             // Fallback to Levenshtein if pg_trgm not available
             logger.warn("PostgreSQL fuzzy matching failed, using Levenshtein fallback: " + e.getMessage());
+            // Disable pg_trgm attempts for subsequent calls to avoid poisoning transactions
+            pgTrgmAvailable = false;
         }
         
         // Fallback: Use Levenshtein distance
@@ -70,6 +82,24 @@ public class CustomerService {
         }
         
         return Optional.ofNullable(bestMatch);
+    }
+
+    private boolean isPgTrgmAvailable() {
+        Boolean cached = pgTrgmAvailable;
+        if (cached != null) {
+            return cached;
+        }
+        try {
+            Boolean exists = jdbcTemplate.queryForObject(
+                "SELECT EXISTS(SELECT 1 FROM pg_extension WHERE extname = 'pg_trgm')",
+                Boolean.class
+            );
+            pgTrgmAvailable = Boolean.TRUE.equals(exists);
+        } catch (Exception e) {
+            logger.warn("Unable to determine pg_trgm availability, disabling fuzzy SQL: " + e.getMessage());
+            pgTrgmAvailable = false;
+        }
+        return pgTrgmAvailable;
     }
     
     /**
