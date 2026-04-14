@@ -1,14 +1,21 @@
 # 🎤 BolKhata - Voice-First Financial Ledger
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-bolkhata.com-blue?style=for-the-badge)](https://bolkhata.com)
-[![AWS](https://img.shields.io/badge/AWS-Deployed-orange?style=for-the-badge&logo=amazon-aws)](https://aws.amazon.com)
+[![Deployment](https://img.shields.io/badge/Deployment-Vercel%20%2B%20Render-black?style=for-the-badge)](https://vercel.com)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 > A modern, voice-enabled financial ledger application designed for small shop owners in India. Record transactions using natural language in Hindi, Tamil, Bengali, Gujarati, or English!
 
 ## 🌟 Live Application
 
-**Visit:** [https://bolkhata.com](https://bolkhata.com)
+- **Primary**: [https://bolkhata.com](https://bolkhata.com)
+- **WWW**: [https://www.bolkhata.com](https://www.bolkhata.com)
+- **Vercel fallback**: `https://bol-khata.vercel.app`
+
+### 🔗 Live Service URLs (Render)
+
+- **Banking API (Spring Boot)**: `https://bolkhata-banking.onrender.com`
+- **Voice API (FastAPI)**: `https://bolkhata-voice.onrender.com`
 
 ## 📖 Overview
 
@@ -102,17 +109,14 @@ BolKhata provides:
 - Multi-language translation
 
 **Database:**
-- PostgreSQL 15 (AWS RDS)
+- PostgreSQL (managed)
 - Optimized schema with indexes
 - pg_trgm extension for fuzzy search
 
 **Infrastructure:**
-- AWS EC2 (t2.small)
-- AWS RDS (db.t3.micro)
-- AWS S3 (audio storage)
-- AWS Route 53 (DNS)
-- Nginx (reverse proxy)
-- Let's Encrypt (SSL/TLS)
+- **Vercel** (frontend hosting)
+- **Render** (banking-service + voice-service)
+- **Domain**: registered in AWS Route 53 (registrar), DNS hosted on Cloudflare (free tier)
 
 ### System Architecture
 
@@ -123,24 +127,19 @@ BolKhata provides:
 └──────┬──────┘
        │
        ▼
-┌─────────────────┐
-│     Nginx       │
-│  Reverse Proxy  │
-│   Port 80/443   │
-└────┬────────┬───┘
-     │        │
-     ▼        ▼
-┌─────────┐ ┌──────────────┐
-│ Banking │ │    Voice     │
-│ Service │ │   Service    │
-│ (8080)  │ │   (8000)     │
-└────┬────┘ └──────┬───────┘
-     │             │
-     ▼             ▼
-┌─────────────────────────┐
-│   PostgreSQL (RDS)      │
-│   + S3 (Audio Files)    │
-└─────────────────────────┘
+┌──────────────────┐
+│      Vercel      │
+│  Static Frontend │
+└───────┬──────────┘
+        │
+        ▼
+┌──────────────────┐      ┌──────────────────┐
+│ Render: Banking  │      │  Render: Voice   │
+│ Spring Boot API  │      │    FastAPI       │
+└────────┬─────────┘      └────────┬─────────┘
+         │                          │
+         ▼                          ▼
+     PostgreSQL                 Sarvam AI
 ```
 
 ## 📦 Installation
@@ -212,9 +211,31 @@ python -m http.server 8081
 - Banking API: http://localhost:8080/api
 - Voice API: http://localhost:8000
 
-## 🚀 AWS Deployment
+## 🚀 Deployment (Current: Vercel + Render)
 
-See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for complete AWS deployment instructions.
+### Frontend (Vercel)
+
+- Deploy the static UI from `web-ui/`
+- Configure the Banking API base URL and Voice API base URL as:
+  - **Banking**: `https://bolkhata-banking.onrender.com/api`
+  - **Voice**: `https://bolkhata-voice.onrender.com`
+
+### Backend (Render)
+
+- Deploy `banking-service` (Spring Boot) as a Render Web Service
+- Deploy `voice-service` (FastAPI) as a Render Web Service
+
+### Custom domain
+
+- Domain registered in **Route 53**
+- DNS hosted on **Cloudflare Free**
+- Domain routed to Vercel via:
+  - `A @ -> 76.76.21.21`
+  - `CNAME www -> cname.vercel-dns.com`
+
+## 🚀 AWS Deployment (Legacy)
+
+This repo previously supported an AWS-based deployment (EC2/RDS/S3/Nginx/Route53). If you want to reproduce that setup, keep using the existing scripts and docs.
 
 ### Quick Deploy
 
@@ -244,19 +265,17 @@ See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for complete AWS deployment instr
 **Transactions:**
 - `GET /api/transactions` - Get all transactions
 - `POST /api/transactions/log` - Create transaction
-- `GET /api/transactions/{id}` - Get transaction by ID
+- `GET /api/transactions/customers` - Get customers (legacy helper)
 
 **Customers:**
 - `GET /api/customers` - Get all customers
-- `GET /api/customers/{id}` - Get customer by ID
 - `PUT /api/customers/{id}` - Update customer
-- `GET /api/customers/{id}/passbook` - Get customer passbook
 
 **Statistics:**
 - `GET /api/statistics` - Get dashboard statistics
 
 **Audio:**
-- `GET /api/audio/{path}` - Stream audio file
+- `GET /api/audio/{userId}/{year}/{month}/{filename}` - Stream audio file
 
 ### Voice Service Endpoints
 
@@ -280,8 +299,8 @@ See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for complete AWS deployment instr
 
 ## 🔒 Security
 
-- HTTPS encryption with Let's Encrypt
-- Password hashing with BCrypt
+- HTTPS (Vercel/Render managed)
+- Password hashing (planned; see code notes)
 - SQL injection prevention
 - CORS configuration
 - Input validation and sanitization
@@ -304,7 +323,7 @@ pytest
 - Average response time: <200ms
 - Voice processing: 2-3 seconds
 - Supports 100+ concurrent users
-- 99.9% uptime on AWS
+- Uptime depends on the current hosting provider (Vercel/Render)
 
 ## 🤝 Contributing
 
@@ -331,8 +350,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Sarvam AI](https://www.sarvam.ai/) for speech recognition API
 - [Spring Boot](https://spring.io/projects/spring-boot) for backend framework
 - [FastAPI](https://fastapi.tiangolo.com/) for voice service
-- [AWS](https://aws.amazon.com/) for cloud infrastructure
-- [Let's Encrypt](https://letsencrypt.org/) for free SSL certificates
+- [Vercel](https://vercel.com/) and [Render](https://render.com/) for hosting
 
 ## 📞 Support
 
