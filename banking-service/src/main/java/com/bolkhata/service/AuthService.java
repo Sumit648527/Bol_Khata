@@ -16,22 +16,40 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
     
+    private static boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
     /**
      * Register a new shopkeeper
      */
     @Transactional
     public User register(RegisterRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Invalid request");
+        }
+        if (isBlank(request.getMobile())) {
+            throw new IllegalArgumentException("Mobile number is required");
+        }
+        if (isBlank(request.getShopName())) {
+            throw new IllegalArgumentException("Shop name is required");
+        }
+        if (isBlank(request.getPassword())) {
+            throw new IllegalArgumentException("Password is required");
+        }
+
+        String mobile = request.getMobile().trim();
+
         // Check if mobile already exists
-        Optional<User> existing = userRepository.findByMobile(request.getMobile());
+        Optional<User> existing = userRepository.findByMobile(mobile);
         if (existing.isPresent()) {
             throw new IllegalArgumentException("Mobile number already registered");
         }
         
         // Create new user
         User user = new User();
-        user.setMobile(request.getMobile()); // Use mobile as username
+        user.setMobile(mobile);
         user.setShopName(request.getShopName());
-        user.setMobile(request.getMobile());
         user.setPassword(request.getPassword()); // In production, hash this!
         user.setLanguage(request.getLanguage() != null ? request.getLanguage() : "hi");
         
@@ -42,6 +60,10 @@ public class AuthService {
      * Login shopkeeper
      */
     public User login(LoginRequest request) {
+        if (request == null || isBlank(request.getMobile()) || isBlank(request.getPassword())) {
+            throw new IllegalArgumentException("Invalid mobile number or password");
+        }
+
         User user = userRepository.findByMobile(request.getMobile())
             .orElseThrow(() -> new IllegalArgumentException("Invalid mobile number or password"));
         
