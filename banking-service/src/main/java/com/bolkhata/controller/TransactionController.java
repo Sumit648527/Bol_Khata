@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping({"/api/transactions", "/transactions"})
 @CrossOrigin(origins = "*")
 public class TransactionController {
     
